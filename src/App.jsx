@@ -15,7 +15,7 @@ import AppLayout from "./ui/AppLayout";
 // Setting Up React Query
 const queryClient = new QueryClient({
   defaultOptions: {
-    staleTime: 60 * 1000, // 1 minutes in milliseconds
+    staleTime: 0, // 1 minutes in milliseconds
   },
 });
 // Declaritively Browsing route
