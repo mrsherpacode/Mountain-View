@@ -14,6 +14,13 @@ const Main = styled.main`
 
   padding: 4rem 4.8rem 6.4rem;
 `;
+const Container = styled.div`
+  max-width: 120rem;
+  display: flex;
+  flex-direction: column;
+  gap: 3.2rem;
+  margin: 0 auto;
+`;
 
 function AppLayout() {
   return (
@@ -22,7 +29,9 @@ function AppLayout() {
       <Sidebar />
       {/* Outlet is where React Router renders the child route components. */}
       <Main>
-        <Outlet />
+        <Container>
+          <Outlet />
+        </Container>
       </Main>
     </StyledAppLayout>
   );

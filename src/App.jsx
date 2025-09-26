@@ -11,6 +11,7 @@ import Users from "../src/pages/Users";
 import Settings from "../src/pages/Settings";
 import PageNotFound from "../src/pages/PageNotFound";
 import AppLayout from "./ui/AppLayout";
+import { Toaster } from "react-hot-toast";
 
 // Setting Up React Query
 const queryClient = new QueryClient({
@@ -18,18 +19,18 @@ const queryClient = new QueryClient({
     staleTime: 0, // 1 minutes in milliseconds
   },
 });
-// Declaritively Browsing route
 function App() {
   return (
-    <BrowserRouter>
-      {/*Providing the QueryClient(reactQuery) to the entire Application*/}
-      <QueryClientProvider client={queryClient}>
+    // Providing the QueryClient(reactQuery) to the entire Application
+    <QueryClientProvider client={queryClient}>
+      {/* Declaratively Browsing route */}
+      <BrowserRouter>
         {/* Integrating React Query Dev Tools */}
         <ReactQueryDevtools />
         {/* Global css style */}
         <GlobalStyles />
         <Routes>
-          {/* AppLayout is the whole application layout,other Routes are child routes of Applayou except login and pagenotfound */}
+          {/* AppLayout is the whole application layout, other Routes are child routes of Applayou except login and pagenotfound */}
           <Route element={<AppLayout />}>
             <Route index element={<Navigate replace to="Dashboard" />} />
             <Route path="dashboard" element={<Dashboard />} />
@@ -43,8 +44,29 @@ function App() {
           <Route path="login" element={<Login />} />
           <Route path="pageNotFound" element={<PageNotFound />} />
         </Routes>
-      </QueryClientProvider>
-    </BrowserRouter>
+      </BrowserRouter>
+      {/* React toaster library for formatting notifications */}
+      <Toaster
+        position="top-center"
+        gutter={12}
+        containerStyle={{ margin: "8px" }}
+        toastOptions={{
+          success: {
+            duration: 3000,
+          },
+          error: {
+            duration: 5000,
+          },
+          style: {
+            fontSize: "16px",
+            maxWidth: "500px",
+            padding: "16px 24px",
+            backgroundColor: "var(--color-gray-0)",
+            color: "var(--color-gray-500)",
+          },
+        }}
+      />
+    </QueryClientProvider>
   );
 }
 
