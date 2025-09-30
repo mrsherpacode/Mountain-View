@@ -10,6 +10,19 @@ export async function getCabins() {
   }
   return data;
 }
+// Mutations: create a new cabin in the database
+export async function createCabin(newCabin) {
+  const { data, error } = await supabase
+    .from("cabins")
+    .insert([newCabin])
+    .select();
+  if (error) {
+    console.error(error);
+    throw new Error("Cabins can't be created");
+  }
+  return data;
+}
+
 // Mutations :deleting a Cabin
 
 export async function deleteCabin(id) {

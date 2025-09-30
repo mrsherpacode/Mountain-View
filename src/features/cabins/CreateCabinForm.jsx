@@ -6,6 +6,14 @@ import Button from "../../ui/Button";
 import FileInput from "../../ui/FileInput";
 import Textarea from "../../ui/Textarea";
 import { useForm } from "react-hook-form";
+import { use } from "react";
+import {
+  hashQueryKey,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
+import { createCabin } from "../../services/apiCabins";
+import toast from "react-hot-toast";
 
 const FormRow = styled.div`
   display: grid;
@@ -44,11 +52,28 @@ const Error = styled.span`
 `;
 
 function CreateCabinForm() {
-  // useForm hook is from react-hook-form. This hook gives us a few functions to use. The most fundamental ones are the register function and the handleSubmit function.
-  const { register, handleSubmit } = useForm();
+  // useForm hook is from react-hook-form. This hook gives us a few functions to use. The most fundamental ones are the register function and the handleSubmit function and reset.
+  const { register, handleSubmit, reset } = useForm();
+  // If you need to use queryClient, import useQueryClient from react-query and uncomment the next line:
+  // React Query automatically refetches → Fresh cabin list with new cabin
+  // // ✅ Table automatically refreshes and shows new cabin
+
+  const queryClient = useQueryClient();
+  const { mutate, isPending: isCreating } = useMutation({
+    mutationFn: createCabin,
+    onSuccess: () => {
+      toast.success("New Cabin successfully created");
+      queryClient.invalidateQueries({ queryKey: ["cabins"] });
+      reset;
+    },
+    onError: (err) => {
+      toast.error(err.message);
+    },
+  });
   // In this function the data is object created by useForm hook and Contains all values from registered form inputs
   function onSubmit(data) {
-    console.log(data);
+    // This actually calls createCabin(data)
+    mutate(data);
   }
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
@@ -97,7 +122,7 @@ function CreateCabinForm() {
         <Button variation="secondary" type="reset">
           Cancel
         </Button>
-        <Button>Add New cabin</Button>
+        <Button disabled={isCreating}>Add New cabin</Button>
       </FormRow>
     </Form>
   );
