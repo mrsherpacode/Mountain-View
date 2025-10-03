@@ -33,7 +33,7 @@ function CreateCabinForm() {
   // In this function the data is object created by useForm hook and Contains all values from registered form inputs
   function onSubmit(data) {
     // This actually calls createCabin(data)
-    mutate(data);
+    mutate({ ...data, image: data.image[0] });
   }
   // returns this function if there is errors
   function onError(errors) {
@@ -121,8 +121,14 @@ function CreateCabinForm() {
         />
       </FormRow>
 
-      <FormRow label="Cabin Photo" error={errors?.image?.message}>
-        <FileInput id="image" accept="image/*" />
+      <FormRow label="Cabin Photo">
+        <FileInput
+          id="image"
+          accept="image/*"
+          {...register("image", {
+            required: "This field is required",
+          })}
+        />
       </FormRow>
 
       <FormRow>
