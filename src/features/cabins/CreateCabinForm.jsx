@@ -1,5 +1,3 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import toast from "react-hot-toast";
 import Input from "../../ui/Input";
 import Form from "../../ui/Form";
 import Button from "../../ui/Button";
@@ -8,7 +6,8 @@ import Textarea from "../../ui/Textarea";
 import FormRow from "../../ui/FormRow";
 
 import { useForm } from "react-hook-form";
-import { createEditCabin } from "../../services/apiCabins";
+import { useCreateCabin } from "./useCreateCabin";
+import { useEditCabin } from "./useEditCabin";
 
 function CreateCabinForm({ cabinToEdit = {} }) {
   const { id: editId, ...editValues } = cabinToEdit;
@@ -19,36 +18,12 @@ function CreateCabinForm({ cabinToEdit = {} }) {
   });
   // getting all the errors from formState.
   const { errors } = formState;
-  // If you need to use queryClient, import useQueryClient from react-query and uncomment the next line:
-  // React Query automatically refetches → Fresh cabin list with new cabin
-  // // ✅ Table automatically refreshes and shows new cabin
+  // Here, i'm using custom hook from useCreateCabin;
+  const { createCabin, isCreating } = useCreateCabin();
 
-  const queryClient = useQueryClient();
-  // For creating
-  const { mutate: createCabin, isPending: isCreating } = useMutation({
-    mutationFn: createEditCabin,
-    onSuccess: () => {
-      toast.success("New Cabin successfully created");
-      queryClient.invalidateQueries({ queryKey: ["cabins"] });
-      reset;
-    },
-    onError: (err) => {
-      toast.error(err.message);
-    },
-  });
+  // Here, i'm using custom hook from useEditingCabin
+  const { editCabin, isEditing } = useEditCabin();
 
-  // For editing
-  const { mutate: editCabin, isPending: isEditing } = useMutation({
-    mutationFn: ({ newCabinData, id }) => createEditCabin(newCabinData, id),
-    onSuccess: () => {
-      toast.success("Cabin successfully edited");
-      queryClient.invalidateQueries({ queryKey: ["cabins"] });
-      reset;
-    },
-    onError: (err) => {
-      toast.error(err.message);
-    },
-  });
   const isWorking = isCreating || isEditing;
 
   // In this function the data is object created by useForm hook and Contains all values from registered form inputs
@@ -57,15 +32,26 @@ function CreateCabinForm({ cabinToEdit = {} }) {
     const image = typeof data.image === "string" ? data.image : data.image[0];
     // Edit cabin
     if (isEditSession)
-      editCabin({
-        newCabinData: {
-          ...data,
-          image,
+      editCabin(
+        {
+          newCabinData: {
+            ...data,
+            image,
+          },
+          id: editId,
         },
-        id: editId,
-      });
+        {
+          onSuccess: () => reset(),
+        }
+      );
     // This actually calls createCabin(data)
-    else createCabin({ ...data, image: image });
+    else
+      createCabin(
+        { ...data, image: image },
+        {
+          onSuccess: () => reset(),
+        }
+      );
   }
   // returns this function if there is errors
   function onError(errors) {
