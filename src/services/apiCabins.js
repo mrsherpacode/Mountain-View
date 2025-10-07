@@ -1,6 +1,8 @@
 //Creating a Service to Query Cabins
 
+import { Query } from "@tanstack/react-query";
 import supabase, { supabaseUrl } from "./supabase";
+import { Await } from "react-router-dom";
 
 export async function getCabins() {
   const { data, error } = await supabase.from("cabins").select("*");
@@ -11,21 +13,30 @@ export async function getCabins() {
   return data;
 }
 // Mutations: create a new cabin in the database
-export async function createCabin(newCabin) {
+export async function createEditCabin(newCabin, id) {
+  const hasImagePath = newCabin.image?.startsWith?.(supabaseUrl);
   // Links to supabase image
   // https://ondprssalprffqjuxrlf.supabase.co/storage/v1/object/public/cabin-images/cabin-001.jpg
-  // 1) create a cabin
   // create a image name which should be unique
   const imageName = `${Math.random()}-${newCabin.image.name}`.replaceAll(
     "/",
     ""
   );
   // create a image path
-  const imagePath = `${supabaseUrl}/storage/v1/object/public/cabin-images/${imageName}`;
-  const { data, error } = await supabase
-    .from("cabins")
-    .insert([{ ...newCabin, image: imagePath }])
-    .select();
+  const imagePath = hasImagePath
+    ? newCabin.image
+    : `${supabaseUrl}/storage/v1/object/public/cabin-images/${imageName}`;
+
+  // 1) create/edit a cabin
+  let query = supabase.from("cabins");
+
+  // A Create a new cabin
+  if (!id) query = query.insert([{ ...newCabin, image: imagePath }]);
+  // B Edit a existing cabin
+  if (id) query = query.update({ ...newCabin, image: imagePath }).eq("id", id);
+
+  const { data, error } = await query.select().single();
+
   if (error) {
     console.error(error);
     throw new Error("Cabins can't be created");
