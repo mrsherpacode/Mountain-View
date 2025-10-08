@@ -1,8 +1,5 @@
 //Creating a Service to Query Cabins
-
-import { Query } from "@tanstack/react-query";
 import supabase, { supabaseUrl } from "./supabase";
-import { Await } from "react-router-dom";
 
 export async function getCabins() {
   const { data, error } = await supabase.from("cabins").select("*");
@@ -28,6 +25,7 @@ export async function createEditCabin(newCabin, id) {
     : `${supabaseUrl}/storage/v1/object/public/cabin-images/${imageName}`;
 
   // 1) create/edit a cabin
+
   let query = supabase.from("cabins");
 
   // A Create a new cabin
@@ -42,7 +40,7 @@ export async function createEditCabin(newCabin, id) {
     throw new Error("Cabins can't be created");
   }
   //2) upload images
-
+  if (hasImagePath) return data;
   const { error: storageError } = await supabase.storage
     .from("cabin-images")
     .upload(imageName, newCabin.image);
