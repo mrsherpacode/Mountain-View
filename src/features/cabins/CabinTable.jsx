@@ -3,7 +3,6 @@ import styled from "styled-components";
 import { getCabins } from "../../services/apiCabins";
 import Spinner from "../../ui/Spinner";
 import CabinRow from "./CabinRow";
-import { useCabins } from "./useCabins";
 
 const Table = styled.div`
   border: 1px solid var(--color-grey-200);
@@ -29,8 +28,16 @@ const TableHeader = styled.header`
   padding: 1.6rem 2.4rem;
 `;
 function CabinTable() {
-  // Here im using custom hook from useCabins
-  const { isLoading, cabins, error } = useCabins();
+  //useQuery custom hook
+  const {
+    isLoading,
+    data: cabins,
+    error,
+  } = useQuery({
+    queryKey: ["cabin"],
+    // queryFn: the function responsible for fetching the data, which must return a promise.
+    queryFn: getCabins,
+  });
 
   if (isLoading) return <Spinner />;
   if (error) return <div>Error loading cabins: {error.message}</div>;
