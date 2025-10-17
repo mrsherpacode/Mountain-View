@@ -1,3 +1,5 @@
+import { cloneElement, useContext } from "react";
+import { createContext, useState } from "react";
 import { createPortal } from "react-dom";
 import { HiXMark } from "react-icons/hi2";
 import styled from "styled-components";
@@ -50,20 +52,48 @@ const Button = styled.button`
     color: var(--color-grey-500);
   }
 `;
+// Compound Component pattern
+//1) create a context
+const ModelContext = createContext();
+
+// 2) create a parent component
+
+function Modal({ children }) {
+  const [openName, setIsOpenName] = useState("");
+  const open = setIsOpenName;
+  const close = () => setIsOpenName("");
+  return (
+    <ModelContext.Provider value={{ open, close, openName }}>
+      {children}
+    </ModelContext.Provider>
+  );
+}
+// Child components
+function Open({ children, opens: openWindow }) {
+  const { open } = useContext(ModelContext);
+  // cloneElement allows to inject event handlers into child components dynamically.
+  return cloneElement(children, { onClick: () => open(openWindow) });
+}
+
 //A React portal allows us to render an element outside of its parent component's DOM structure while keeping it in the original position in the React component tree. This means props continue to work normally.portals prevent issues caused by CSS properties like overflow: hidden on parent elements, which can cut off modal content.
-function Modal({ children, onClose }) {
+function Window({ children, name }) {
+  const { openName, close } = useContext(ModelContext);
+
+  if (name !== openName) return null;
   return createPortal(
     <Overlay>
       <StyledModal>
-        <Button onClick={onClose}>
+        <Button onClick={close}>
           <HiXMark />
         </Button>
-        {children}
+        {cloneElement(children, { onCloseModal: close })}
       </StyledModal>
     </Overlay>,
     // body is parent element of modal
     document.body
   );
 }
-
+// Attach child components to Modal for compound component pattern
+Modal.Open = Open;
+Modal.window = Window;
 export default Modal;
