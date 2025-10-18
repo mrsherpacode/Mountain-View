@@ -3,6 +3,7 @@ import { createContext, useState } from "react";
 import { createPortal } from "react-dom";
 import { HiXMark } from "react-icons/hi2";
 import styled from "styled-components";
+import { useOutsideClick } from "../hooks/useOutsideClick";
 
 const StyledModal = styled.div`
   position: fixed;
@@ -78,11 +79,13 @@ function Open({ children, opens: openWindow }) {
 //A React portal allows us to render an element outside of its parent component's DOM structure while keeping it in the original position in the React component tree. This means props continue to work normally.portals prevent issues caused by CSS properties like overflow: hidden on parent elements, which can cut off modal content.
 function Window({ children, name }) {
   const { openName, close } = useContext(ModelContext);
+  //  Here,i'm importing custom hook that closes the model when clicked outside the modal.
+  const ref = useOutsideClick(close);
 
   if (name !== openName) return null;
   return createPortal(
     <Overlay>
-      <StyledModal>
+      <StyledModal ref={ref}>
         <Button onClick={close}>
           <HiXMark />
         </Button>
