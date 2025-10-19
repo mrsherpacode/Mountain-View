@@ -7,10 +7,10 @@ export function useDeleteCabin() {
   const queryClient = useQueryClient();
   // Using React Query's useMutation Hook
   const { isLoading: isDeleting, mutate: deleteCabin } = useMutation({
-    mutationFn: (id) => deleteCabinApi(id),
+    mutationFn: deleteCabinApi,
     onSuccess: () => {
       toast.success("Cabin deleted successfully!");
-      queryClient.invalidateQueries(["cabins"]);
+      queryClient.invalidateQueries({ queryKey: ["cabins"] });
     },
     onError: (err) => {
       toast.error(`Error: ${err.message}`);

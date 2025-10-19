@@ -1,4 +1,5 @@
 //Creating a Service to Query Cabins
+
 import supabase, { supabaseUrl } from "./supabase";
 
 export async function getCabins() {
@@ -25,7 +26,6 @@ export async function createEditCabin(newCabin, id) {
     : `${supabaseUrl}/storage/v1/object/public/cabin-images/${imageName}`;
 
   // 1) create/edit a cabin
-
   let query = supabase.from("cabins");
 
   // A Create a new cabin
@@ -57,10 +57,25 @@ export async function createEditCabin(newCabin, id) {
 // Mutations :deleting a Cabin
 
 export async function deleteCabin(id) {
+  // First try to delete normally
   const { data, error } = await supabase.from("cabins").delete().eq("id", id);
+  
   if (error) {
-    console.error(error);
-    throw new Error("Cabin could not be deleted");
+    console.error("Delete error details:", error);
+    
+    // Handle foreign key constraint errors
+    if (error.code === "23503" || error.message?.includes("foreign key")) {
+      throw new Error("Cannot delete this cabin because it has existing bookings. Please cancel all bookings for this cabin first, or contact support.");
+    }
+    
+    // Handle other specific errors
+    if (error.code === "42501") {
+      throw new Error("You don't have permission to delete this cabin.");
+    }
+    
+    // Generic error message with details
+    throw new Error(`Cabin could not be deleted: ${error.message || "Unknown database error"}`);
   }
+  
   return data;
 }
