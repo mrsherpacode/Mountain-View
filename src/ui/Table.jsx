@@ -38,7 +38,7 @@ const StyledRow = styled(CommonRow)`
 `;
 
 const StyledBody = styled.section`
-  margin: 0.4rem 0;
+  margin: 0;
 `;
 
 const Footer = styled.footer`
@@ -90,8 +90,9 @@ function Row({ children }) {
   );
 }
 
-function Body({ children }) {
-  return <StyledBody>{children}</StyledBody>;
+function Body({ data, render }) {
+  if (!data.length) return <Empty> There is no data</Empty>;
+  return <StyledBody>{data.map(render)}</StyledBody>;
 }
 
 ////////////////////////////
