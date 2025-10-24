@@ -21,6 +21,7 @@ function CabinTable() {
   if (error) return <div>Error loading cabins: {error.message}</div>;
 
   return (
+    // Here, Menus is the parent component
     <Menus>
       <Table columns="0.6fr 1.8fr 2.2fr 1fr 1fr 1fr">
         <Table.Header>

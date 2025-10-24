@@ -69,45 +69,37 @@ function CabinRow({ cabin }) {
       <Price>{formatCurrency(regularPrice)}</Price>
       <Discount>{discount ? formatCurrency(discount) : "—"}</Discount>
       <div>
-        <button onClick={handleDuplicate}>
-          <HiSquare2Stack />
-        </button>
-
         {/* Edit Modal */}
         <Modal>
-          <Modal.Open opens="edit">
-            <button>
-              <HiPencil />
-            </button>
-          </Modal.Open>
-          <Modal.window name="edit">
-            <CreateCabinForm cabinToEdit={cabin} />
-          </Modal.window>
-        </Modal>
+          {/* // Compound Component Pattern */}
+          <Menus.Menu>
+            <Menus.ToggleMenu id={cabinId} />
+            <Menus.List id={cabinId}>
+              <Menus.Button icon={<HiSquare2Stack />} onClick={handleDuplicate}>
+                Duplicate
+              </Menus.Button>
+              <Modal.Open opens="edit">
+                <Menus.Button icon={<HiPencil />}> Edit </Menus.Button>
+              </Modal.Open>
+              <Modal.Open opens="delete">
+                <Menus.Button icon={<HiTrash />}>Delete</Menus.Button>
+              </Modal.Open>
+            </Menus.List>
 
-        {/* Delete Modal */}
-        <Modal>
-          <Modal.Open opens="delete">
-            <button>
-              <HiTrash />
-            </button>
-          </Modal.Open>
-          <Modal.window name="delete">
-            <ConfirmDelete
-              resourceName="cabins"
-              onConfirm={() => deleteCabin(cabinId)}
-            />
-          </Modal.window>
+            <Modal.window name="edit">
+              <CreateCabinForm cabinToEdit={cabin} />
+            </Modal.window>
+
+            {/* Delete Modal */}
+
+            <Modal.window name="delete">
+              <ConfirmDelete
+                resourceName="cabins"
+                onConfirm={() => deleteCabin(cabinId)}
+              />
+            </Modal.window>
+          </Menus.Menu>
         </Modal>
-        {/* // Compound Component Pattern */}
-        <Menus.Menu>
-          <Menus.ToggleMenu id={cabinId} />
-          <Menus.List id={cabinId}>
-            <Menus.Button icon={<HiSquare2Stack />}>Duplicate</Menus.Button>
-            <Menus.Button icon={<HiPencil />}> Edit </Menus.Button>
-            <Menus.Button icon={<HiTrash />}>Delete</Menus.Button>
-          </Menus.List>
-        </Menus.Menu>
       </div>
     </Table.Row>
   );
