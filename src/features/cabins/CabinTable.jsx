@@ -4,6 +4,7 @@ import Spinner from "../../ui/Spinner";
 import CabinRow from "./CabinRow";
 import Table from "../../ui/Table";
 import Menus from "../../ui/Menus";
+import { useSearchParams } from "react-router-dom";
 
 function CabinTable() {
   //useQuery custom hook
@@ -16,10 +17,21 @@ function CabinTable() {
     // queryFn: the function responsible for fetching the data, which must return a promise.
     queryFn: getCabins,
   });
+  //we use the useSearchParams hook to read the current value from the URL.
+  const [searchParams] = useSearchParams();
 
   if (isLoading) return <Spinner />;
-  if (error) return <div>Error loading cabins: {error.message}</div>;
 
+  if (error) return <div>Error loading cabins: {error.message}</div>;
+  // Filtering table based on All, No-Discount and With-Discount
+  const filterValue = searchParams.get("discount") || "All";
+  let filteredCabins;
+  if (filterValue === "All") filteredCabins = cabins;
+  if (filterValue === "No-Discount")
+    filteredCabins = cabins.filter((cabin) => cabin.discount === 0);
+
+  if (filterValue === "With-Discount")
+    filteredCabins = cabins.filter((cabin) => cabin.discount > 0);
   return (
     // Here, Menus is the parent component
     <Menus>
@@ -34,7 +46,7 @@ function CabinTable() {
         </Table.Header>
         {/* Here, i'm applying render prop pattern*/}
         <Table.Body
-          data={cabins}
+          data={filteredCabins}
           render={(cabin) => <CabinRow cabin={cabin} key={cabin.id} />}
         />
       </Table>
