@@ -1,5 +1,6 @@
 import { useSearchParams } from "react-router-dom";
 import styled, { css } from "styled-components";
+import SortBy from "./SortBy";
 
 const StyledFilter = styled.div`
   border: 1px solid var(--color-grey-100);
@@ -46,16 +47,47 @@ function Filter({ fieldValue, options }) {
   }
 
   return (
-    <StyledFilter>
-      {options.map((option) => (
-        <FilterButton
-          key={option.value}
-          onClick={() => handleClick(option.value)}
-        >
-          {option.label}
-        </FilterButton>
-      ))}
-    </StyledFilter>
+    <>
+      <StyledFilter>
+        {options.map((option) => (
+          <FilterButton
+            key={option.value}
+            onClick={() => handleClick(option.value)}
+          >
+            {option.label}
+          </FilterButton>
+        ))}
+      </StyledFilter>
+      {/* sorting the cabin table */}
+      <SortBy
+        options={[
+          {
+            value: "name-asc",
+            label: "sort by name(A-Z)",
+          },
+          {
+            value: "name-desc",
+            label: "sort by name(Z-A)",
+          },
+          {
+            value: "regularPrice-asc",
+            label: "sort by price(low first)",
+          },
+          {
+            value: "regularPrice-desc",
+            label: "sort by price(high first )",
+          },
+          {
+            value: "maxCapacity-asc",
+            label: "sort by capacity(low first )",
+          },
+          {
+            value: "maxCapacity-desc",
+            label: "sort by capacity(high first )",
+          },
+        ]}
+      />
+    </>
   );
 }
 export default Filter;

@@ -23,6 +23,7 @@ function CabinTable() {
   if (isLoading) return <Spinner />;
 
   if (error) return <div>Error loading cabins: {error.message}</div>;
+  // 1) Filtering Cabin
   // Filtering table based on All, No-Discount and With-Discount
   const filterValue = searchParams.get("discount") || "All";
   let filteredCabins;
@@ -32,6 +33,15 @@ function CabinTable() {
 
   if (filterValue === "With-Discount")
     filteredCabins = cabins.filter((cabin) => cabin.discount > 0);
+  // 2) Sorting cabin
+  const sortBy = searchParams.get("sortBy") || "name-asc";
+
+  const [field, direction] = sortBy.split("-");
+  const modifier = direction === "asc" ? 1 : -1;
+  const sortedCabin = filteredCabins.sort(
+    (a, b) => (a[field] - b[field]) * modifier
+  );
+
   return (
     // Here, Menus is the parent component
     <Menus>
@@ -44,9 +54,10 @@ function CabinTable() {
           <div>Discount</div>
           <div></div>
         </Table.Header>
+
         {/* Here, i'm applying render prop pattern*/}
         <Table.Body
-          data={filteredCabins}
+          data={sortedCabin}
           render={(cabin) => <CabinRow cabin={cabin} key={cabin.id} />}
         />
       </Table>
