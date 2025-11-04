@@ -1,9 +1,17 @@
 import BookingRow from "./BookingRow";
 import Table from "../../ui/Table";
 import Menus from "../../ui/Menus";
+import { useBookings } from "./useBookings";
+import Empty from "../../ui/Empty";
+import Spinner from "../../ui/Spinner";
 
 function BookingTable() {
-  const bookings = [];
+  // here, i'm using custom hook
+  const { bookings, isLoading, error } = useBookings();
+
+  if (isLoading) return <Spinner />;
+  if (error) return <div>Error loading bookings: {error.message}</div>;
+  if (!bookings?.length) return <Empty resourceName="bookings" />;
 
   return (
     <Menus>
