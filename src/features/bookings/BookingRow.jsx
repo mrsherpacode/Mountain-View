@@ -34,8 +34,8 @@ const Amount = styled.div`
   font-weight: 500;
 `;
 
-function BookingRow({
-  booking: {
+function BookingRow({ booking }) {
+  const {
     id: bookingId,
     created_at,
     startDate,
@@ -44,10 +44,21 @@ function BookingRow({
     numGuests,
     totalPrice,
     status,
-    guests: { fullName: guestName, email },
-    cabins: { name: cabinName },
-  },
-}) {
+    guests,
+    cabins,
+  } = booking;
+
+  // Debug: Log the actual data structure (remove this after testing)
+  console.log("Booking data:", { guests, cabins });
+
+  // Handle guests data safely (might be array or object)
+  const guest = Array.isArray(guests) ? guests[0] : guests;
+  const guestName = guest?.fullName || "Unknown Guest";
+  const email = guest?.email || "No email";
+
+  // Handle cabins data safely (might be array or object)
+  const cabin = Array.isArray(cabins) ? cabins[0] : cabins;
+  const cabinName = cabin?.name || "Unknown Cabin";
   const statusToTagName = {
     unconfirmed: "blue",
     "checked-in": "green",
