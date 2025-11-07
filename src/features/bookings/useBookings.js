@@ -6,21 +6,26 @@ import { useSearchParams } from "react-router-dom";
 
 export function useBookings() {
   const [searchParams] = useSearchParams();
-
+  //Filter
   const filterValue = searchParams.get("status");
   const filter =
     !filterValue || filterValue === "all"
       ? null
       : { field: "status", value: filterValue };
+  // Sorting , startDate-desc is default value
+  const sortByRaw = searchParams.get("sortBy") || "startDate-desc";
+  const [field, direction] = sortByRaw.split("-");
+  const sortBy = { field, direction };
+
   //useQuery custom hook
   const {
     isLoading,
     data: bookings,
     error,
   } = useQuery({
-    queryKey: ["bookings", filter],
+    queryKey: ["bookings", filter, sortBy],
     // queryFn: the function responsible for fetching the data, which must return a promise.
-    queryFn: () => getBookings({ filter }),
+    queryFn: () => getBookings({ filter, sortBy }),
   });
   return {
     isLoading,
