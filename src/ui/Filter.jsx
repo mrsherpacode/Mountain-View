@@ -37,12 +37,12 @@ const FilterButton = styled.button`
 `;
 
 // Filter Component
-function Filter({ fieldValue, options }) {
+function Filter({ filterField, options }) {
   //we use the useSearchParams hook to read the current filter value from the URL.
   const [searchParams, setSearchParams] = useSearchParams();
   // handleClick  receives the value to set in the URL.
   function handleClick(value) {
-    searchParams.set(fieldValue, value);
+    searchParams.set(filterField, value);
     setSearchParams(searchParams);
   }
 

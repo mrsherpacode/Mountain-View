@@ -48,9 +48,6 @@ function BookingRow({ booking }) {
     cabins,
   } = booking;
 
-  // Debug: Log the actual data structure (remove this after testing)
-  console.log("Booking data:", { guests, cabins });
-
   // Handle guests data safely (might be array or object)
   const guest = Array.isArray(guests) ? guests[0] : guests;
   const guestName = guest?.fullName || "Unknown Guest";
