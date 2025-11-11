@@ -8,7 +8,7 @@ import Pagination from "../../ui/Pagination";
 
 function BookingTable() {
   // here, i'm using custom hook
-  const { bookings, isLoading, error } = useBookings();
+  const { bookings, isLoading, error, count } = useBookings();
 
   if (isLoading) return <Spinner />;
   if (error) return <div>Error loading bookings: {error.message}</div>;
@@ -33,7 +33,7 @@ function BookingTable() {
           )}
         />
         <Table.Footer>
-          <Pagination count={45} />
+          <Pagination count={count} />
         </Table.Footer>
       </Table>
     </Menus>

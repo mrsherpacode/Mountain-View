@@ -16,20 +16,23 @@ export function useBookings() {
   const sortByRaw = searchParams.get("sortBy") || "startDate-desc";
   const [field, direction] = sortByRaw.split("-");
   const sortBy = { field, direction };
+  // Pagination
+  const page = !searchParams.get("page") ? 1 : Number(searchParams.get("page"));
 
   //useQuery custom hook
   const {
     isLoading,
-    data: bookings,
+    data: { data: bookings, count } = {},
     error,
   } = useQuery({
-    queryKey: ["bookings", filter, sortBy],
+    queryKey: ["bookings", filter, sortBy, page],
     // queryFn: the function responsible for fetching the data, which must return a promise.
-    queryFn: () => getBookings({ filter, sortBy }),
+    queryFn: () => getBookings({ filter, sortBy, page }),
   });
   return {
     isLoading,
     bookings,
     error,
+    count,
   };
 }
