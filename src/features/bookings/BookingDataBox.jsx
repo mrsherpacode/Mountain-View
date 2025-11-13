@@ -115,9 +115,21 @@ function BookingDataBox({ booking }) {
     hasBreakfast,
     observations,
     isPaid,
-    guests: { fullName: guestName, email, country, countryFlag, nationalID },
-    cabins: { name: cabinName },
+    guests,
+    cabins,
   } = booking;
+
+  // Safely extract guest data (handle both array and object formats)
+  const guest = Array.isArray(guests) ? guests[0] : guests;
+  const guestName = guest?.fullName || "Unknown Guest";
+  const email = guest?.email || "No email";
+  const country = guest?.country || "Unknown";
+  const countryFlag = guest?.countryFlag || "";
+  const nationalID = guest?.nationalID || "No ID";
+
+  // Safely extract cabin data
+  const cabin = Array.isArray(cabins) ? cabins[0] : cabins;
+  const cabinName = cabin?.name || "Unknown Cabin";
 
   return (
     <StyledBookingDataBox>
