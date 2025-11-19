@@ -7,9 +7,9 @@ import Table from "../../ui/Table";
 
 import { formatCurrency } from "../../utils/helpers";
 import { formatDistanceFromNow } from "../../utils/helpers";
-import { HiArrowDownCircle, HiEye } from "react-icons/hi2";
+import { HiArrowDownCircle, HiArrowUpOnSquare, HiEye } from "react-icons/hi2";
 import { useNavigate } from "react-router-dom";
-import { HiArrowCircleDown } from "react-icons/hi";
+import { useCheckout } from "../check-in-out/useCheckout";
 
 const Cabin = styled.div`
   font-size: 1.6rem;
@@ -65,6 +65,8 @@ function BookingRow({ booking }) {
     "checked-in": "green",
     "checked-out": "silver",
   };
+  // Here, i'm using custom hook for checkingout user
+  const { checkout, isCheckingOut } = useCheckout();
 
   return (
     <Table.Row>
@@ -101,12 +103,23 @@ function BookingRow({ booking }) {
           >
             See details
           </Menus.Button>
+          {/* Checkin  */}
           {status === "unconfirmed" && (
             <Menus.Button
               icon={<HiArrowDownCircle />}
               onClick={() => navigate(`/checkin/${bookingId}`)}
             >
               Check-in
+            </Menus.Button>
+          )}
+          {/* checkout */}
+          {status === "checked-in" && (
+            <Menus.Button
+              icon={<HiArrowUpOnSquare />}
+              onClick={() => checkout(bookingId)}
+              disabled={isCheckingOut}
+            >
+              Check-out
             </Menus.Button>
           )}
         </Menus.List>
