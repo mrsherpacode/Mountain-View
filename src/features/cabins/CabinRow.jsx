@@ -37,7 +37,7 @@ const Discount = styled.div`
 `;
 
 function CabinRow({ cabin }) {
-  const { deleteCabin } = useDeleteCabin();
+  const { deleteCabin, isDeleting } = useDeleteCabin();
   const { createCabin } = useCreateCabin();
 
   const {
@@ -85,20 +85,22 @@ function CabinRow({ cabin }) {
                 <Menus.Button icon={<HiTrash />}>Delete</Menus.Button>
               </Modal.Open>
             </Menus.List>
-
-            <Modal.window name="edit">
-              <CreateCabinForm cabinToEdit={cabin} />
-            </Modal.window>
-
-            {/* Delete Modal */}
-
-            <Modal.window name="delete">
-              <ConfirmDelete
-                resourceName="cabins"
-                onConfirm={() => deleteCabin(cabinId)}
-              />
-            </Modal.window>
           </Menus.Menu>
+
+          <Modal.Window name="edit">
+            <CreateCabinForm cabinToEdit={cabin} />
+          </Modal.Window>
+
+          <Modal.Window name="delete">
+            <ConfirmDelete
+              resourceName="cabins"
+              onConfirm={() => {
+                console.log("Deleting cabin with ID:", cabinId);
+                deleteCabin(cabinId);
+              }}
+              disabled={isDeleting}
+            />
+          </Modal.Window>
         </Modal>
       </div>
     </Table.Row>

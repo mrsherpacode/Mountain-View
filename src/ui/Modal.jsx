@@ -98,5 +98,5 @@ function Window({ children, name }) {
 }
 // Attach child components to Modal for compound component pattern
 Modal.Open = Open;
-Modal.window = Window;
+Modal.Window = Window;
 export default Modal;

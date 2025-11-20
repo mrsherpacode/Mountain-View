@@ -57,10 +57,14 @@ export async function createEditCabin(newCabin, id) {
 // Mutations :deleting a Cabin
 
 export async function deleteCabin(id) {
+  console.log("Attempting to delete cabin with ID:", id);
   const { data, error } = await supabase.from("cabins").delete().eq("id", id);
   if (error) {
-    console.error(error);
-    throw new Error("Cabin could not be deleted");
+    console.error("Detailed Supabase error:", error);
+    throw new Error(
+      `Cabin could not be deleted: ${error.message || error.code}`
+    );
   }
+  console.log("Delete successful, returned data:", data);
   return data;
 }
