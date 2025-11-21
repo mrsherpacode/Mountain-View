@@ -3,16 +3,19 @@ import Button from "../../ui/Button";
 import Form from "../../ui/Form";
 import Input from "../../ui/Input";
 import FormRowVertical from "../../ui/FormRowVertical";
-import { Login } from "../../services/apiAuth";
+import { useLogin } from "./useLogin";
+import SpinnerMini from "../../ui/SpinnerMini";
 
 function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  // here, i'm using custom hook
+  const { login, isLoading } = useLogin();
 
   function handleSubmit(e) {
     e.preventDefault();
     if (!email || !password) return;
-    Login({ email, password });
+    login({ email, password });
   }
 
   return (
@@ -21,6 +24,7 @@ function LoginForm() {
         <Input
           type="email"
           id="email"
+          disabled={isLoading}
           // This makes this form better for password managers
           autoComplete="username"
           value={email}
@@ -37,7 +41,7 @@ function LoginForm() {
         />
       </FormRowVertical>
       <FormRowVertical>
-        <Button size="large">Login</Button>
+        <Button size="large">{!isLoading ? "Login" : <SpinnerMini />}</Button>
       </FormRowVertical>
     </Form>
   );
