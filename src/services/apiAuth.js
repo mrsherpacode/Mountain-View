@@ -11,3 +11,15 @@ export async function Login({ email, password }) {
 
   return data;
 }
+
+//this function gets(fetches) user data from supabase
+
+export async function getCurrentUser() {
+  // check if data exist in localStorage.
+  const { data: session } = await supabase.auth.getSession();
+  if (!session.session) return null;
+  const { data, error } = await supabase.auth.getUser();
+  if (error) throw new Error(error.message);
+  console.log(data);
+  return data?.user;
+}

@@ -14,6 +14,7 @@ import AppLayout from "./ui/AppLayout";
 import { Toaster } from "react-hot-toast";
 import Booking from "./pages/Booking";
 import Checkin from "./pages/Checkin";
+import ProctedRoute from "./ui/ProctedRoute";
 
 // Setting Up React Query
 const queryClient = new QueryClient({
@@ -32,9 +33,15 @@ function App() {
         {/* Global css style */}
         <GlobalStyles />
         <Routes>
-          {/* AppLayout is the whole application layout, other Routes are child routes of Applayou except login and pagenotfound */}
-          <Route element={<AppLayout />}>
-            <Route index element={<Navigate replace to="Dashboard" />} />
+          {/* ProctedRoute is parent of all other routes and only loged in or authorized  users get access to the app, AppLayout is the whole application layout, other Routes are child routes of Applayou except login and pagenotfound */}
+          <Route
+            element={
+              <ProctedRoute>
+                <AppLayout />
+              </ProctedRoute>
+            }
+          >
+            <Route index element={<Navigate replace to="dashboard" />} />
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="cabins" element={<Cabins />} />
             <Route path="account" element={<Account />} />
@@ -46,7 +53,7 @@ function App() {
           </Route>
 
           <Route path="login" element={<Login />} />
-          <Route path="pageNotFound" element={<PageNotFound />} />
+          <Route path="*" element={<PageNotFound />} />
         </Routes>
       </BrowserRouter>
       {/* React toaster library for formatting notifications */}
