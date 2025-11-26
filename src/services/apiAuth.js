@@ -23,3 +23,8 @@ export async function getCurrentUser() {
   console.log(data);
   return data?.user;
 }
+// This sign out user
+export async function logout() {
+  const { error } = supabase.auth.signOut();
+  if (error) throw new Error(error.message);
+}
