@@ -3,17 +3,29 @@ import Button from "../../ui/Button";
 import Form from "../../ui/Form";
 import FormRow from "../../ui/FormRow";
 import Input from "../../ui/Input";
+import { useSignUp } from "./useSignUp";
 
 // Email regex: /\S+@\S+\.\S+/
 
 function SignupForm() {
   // here, i'm using react's useForm()hook.
-  const { register, formState, handleSubmit, getValues } = useForm();
+  const { register, formState, handleSubmit, getValues, reset } = useForm();
   const { errors } = formState;
+  // here, i'm using custom signUp hook
+  const { signUp, isPending } = useSignUp();
 
   // onSubmit function and data gets all the form values
-  function onSubmit(data) {
-    console.log(data);
+  function onSubmit({ fullName, email, password }) {
+    signUp(
+      {
+        fullName,
+        email,
+        password,
+      },
+      {
+        onSettled: reset,
+      }
+    );
   }
 
   return (
@@ -21,6 +33,7 @@ function SignupForm() {
       <FormRow label="Full name" error={errors?.fullName?.message}>
         <Input
           type="text"
+          disabled={isPending}
           id="fullName"
           {...register("fullName", {
             required: "Full name is required",
