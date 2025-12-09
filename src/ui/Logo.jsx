@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { useDarkMode } from "../contexts/DarkModalContext";
 
 const StyledLogo = styled.div`
   text-align: center;
@@ -10,9 +11,13 @@ const Img = styled.img`
 `;
 
 function Logo() {
+  // Here, i'm using custom hook
+  const { darkMode } = useDarkMode();
+
+  const src = darkMode ? "/logo-dark.png" : "/logo-light.png";
   return (
     <StyledLogo>
-      <Img src="/logo.png" alt="Logo" />
+      <Img src={src} alt="Logo" />
     </StyledLogo>
   );
 }

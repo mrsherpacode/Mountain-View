@@ -25,12 +25,13 @@ function UserAvatar() {
   const { user } = useUser();
   // here, from user gets the fullName and avatar from user.user_metadata
   const { fullName, avatar } = user.user_metadata;
+
+  // Add cache busting parameter to force image refresh
+  const avatarSrc = avatar ? `${avatar}?t=${Date.now()}` : "default-user.jpg";
+
   return (
     <StyledUserAvatar>
-      <Avatar
-        src={avatar || "default-user.jpg"}
-        alt={`Avatar of ${fullName}`}
-      />
+      <Avatar src={avatarSrc} alt={`Avatar of ${fullName}`} />
       <span>{fullName}</span>
     </StyledUserAvatar>
   );
