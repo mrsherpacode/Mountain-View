@@ -1,3 +1,5 @@
+// This hook creates a "persistent useState" that remembers values across browser sessions! 💾✨
+
 import { useState, useEffect } from "react";
 
 export function useLocalStorageState(initialState, key) {
