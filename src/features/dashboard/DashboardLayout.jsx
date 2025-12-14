@@ -2,6 +2,8 @@ import styled from "styled-components";
 import { useRecentBookings } from "./useRecentBookings";
 import { useRecentStays } from "./useRecentStays";
 import Spinner from "../../ui/Spinner";
+import Stats from "./Stats";
+import { useCabins } from "../cabins/useCabins";
 
 const StyledDashboardLayout = styled.div`
   display: grid;
@@ -11,22 +13,20 @@ const StyledDashboardLayout = styled.div`
 `;
 function DashboardLayout() {
   // here, i'm using custom hook
-  const { bookings, isPending: isPending1 } = useRecentBookings();
-  const { stays, isPending: isPending2, confirmedStays } = useRecentStays();
+  const { bookings, isPending: isPending1, numDays } = useRecentBookings();
+  const { isPending: isPending2, confirmedStays } = useRecentStays();
+  const { cabins, isLoading: isPending3 } = useCabins();
 
-  if (isPending1 || isPending2) return <Spinner />;
-
-  // Debug logs - remove these in production
-  console.log("Bookings:", bookings);
-  console.log("Stays:", stays);
-  console.log("Confirmed stays:", confirmedStays);
+  if (isPending1 || isPending2 || isPending3) return <Spinner />;
 
   return (
     <StyledDashboardLayout>
-      <div>statistics </div>
-      <div>statistics </div>
-      <div>statistics </div>
-      <div>statistics </div>
+      <Stats
+        bookings={bookings}
+        confirmedStays={confirmedStays}
+        numDays={numDays}
+        countCabins={cabins.length}
+      />
     </StyledDashboardLayout>
   );
 }
