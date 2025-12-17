@@ -1,6 +1,17 @@
 import styled from "styled-components";
 import DashboardBox from "./DashboardBox";
-
+import {
+  AreaChart,
+  ResponsiveContainer,
+  Area,
+  CartesianGrid,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+import Heading from "../../ui/Heading";
+import { useDarkMode } from "../../contexts/DarkModalContext";
+import { eachDayOfInterval, format, isSameDay, subDays } from "date-fns";
 const StyledSalesChart = styled(DashboardBox)`
   grid-column: 1 / -1;
 
@@ -11,49 +22,118 @@ const StyledSalesChart = styled(DashboardBox)`
   }
 `;
 
-const fakeData = [
-  { label: "Jan 09", totalSales: 480, extrasSales: 20 },
-  { label: "Jan 10", totalSales: 580, extrasSales: 100 },
-  { label: "Jan 11", totalSales: 550, extrasSales: 150 },
-  { label: "Jan 12", totalSales: 600, extrasSales: 50 },
-  { label: "Jan 13", totalSales: 700, extrasSales: 150 },
-  { label: "Jan 14", totalSales: 800, extrasSales: 150 },
-  { label: "Jan 15", totalSales: 700, extrasSales: 200 },
-  { label: "Jan 16", totalSales: 650, extrasSales: 200 },
-  { label: "Jan 17", totalSales: 600, extrasSales: 300 },
-  { label: "Jan 18", totalSales: 550, extrasSales: 100 },
-  { label: "Jan 19", totalSales: 700, extrasSales: 100 },
-  { label: "Jan 20", totalSales: 800, extrasSales: 200 },
-  { label: "Jan 21", totalSales: 700, extrasSales: 100 },
-  { label: "Jan 22", totalSales: 810, extrasSales: 50 },
-  { label: "Jan 23", totalSales: 950, extrasSales: 250 },
-  { label: "Jan 24", totalSales: 970, extrasSales: 100 },
-  { label: "Jan 25", totalSales: 900, extrasSales: 200 },
-  { label: "Jan 26", totalSales: 950, extrasSales: 300 },
-  { label: "Jan 27", totalSales: 850, extrasSales: 200 },
-  { label: "Jan 28", totalSales: 900, extrasSales: 100 },
-  { label: "Jan 29", totalSales: 800, extrasSales: 300 },
-  { label: "Jan 30", totalSales: 950, extrasSales: 200 },
-  { label: "Jan 31", totalSales: 1100, extrasSales: 300 },
-  { label: "Feb 01", totalSales: 1200, extrasSales: 400 },
-  { label: "Feb 02", totalSales: 1250, extrasSales: 300 },
-  { label: "Feb 03", totalSales: 1400, extrasSales: 450 },
-  { label: "Feb 04", totalSales: 1500, extrasSales: 500 },
-  { label: "Feb 05", totalSales: 1400, extrasSales: 600 },
-  { label: "Feb 06", totalSales: 1450, extrasSales: 400 },
-];
+// const fakeData = [
+//   { label: "Jan 09", totalSales: 480, extrasSales: 20 },
+//   { label: "Jan 10", totalSales: 580, extrasSales: 100 },
+//   { label: "Jan 11", totalSales: 550, extrasSales: 150 },
+//   { label: "Jan 12", totalSales: 600, extrasSales: 50 },
+//   { label: "Jan 13", totalSales: 700, extrasSales: 150 },
+//   { label: "Jan 14", totalSales: 800, extrasSales: 150 },
+//   { label: "Jan 15", totalSales: 700, extrasSales: 200 },
+//   { label: "Jan 16", totalSales: 650, extrasSales: 200 },
+//   { label: "Jan 17", totalSales: 600, extrasSales: 300 },
+//   { label: "Jan 18", totalSales: 550, extrasSales: 100 },
+//   { label: "Jan 19", totalSales: 700, extrasSales: 100 },
+//   { label: "Jan 20", totalSales: 800, extrasSales: 200 },
+//   { label: "Jan 21", totalSales: 700, extrasSales: 100 },
+//   { label: "Jan 22", totalSales: 810, extrasSales: 50 },
+//   { label: "Jan 23", totalSales: 950, extrasSales: 250 },
+//   { label: "Jan 24", totalSales: 970, extrasSales: 100 },
+//   { label: "Jan 25", totalSales: 900, extrasSales: 200 },
+//   { label: "Jan 26", totalSales: 950, extrasSales: 300 },
+//   { label: "Jan 27", totalSales: 850, extrasSales: 200 },
+//   { label: "Jan 28", totalSales: 900, extrasSales: 100 },
+//   { label: "Jan 29", totalSales: 800, extrasSales: 300 },
+//   { label: "Jan 30", totalSales: 950, extrasSales: 200 },
+//   { label: "Jan 31", totalSales: 1100, extrasSales: 300 },
+//   { label: "Feb 01", totalSales: 1200, extrasSales: 400 },
+//   { label: "Feb 02", totalSales: 1250, extrasSales: 300 },
+//   { label: "Feb 03", totalSales: 1400, extrasSales: 450 },
+//   { label: "Feb 04", totalSales: 1500, extrasSales: 500 },
+//   { label: "Feb 05", totalSales: 1400, extrasSales: 600 },
+//   { label: "Feb 06", totalSales: 1450, extrasSales: 400 },
+// ];
 
-const isDarkMode = true;
-const colors = isDarkMode
-  ? {
-      totalSales: { stroke: "#4f46e5", fill: "#4f46e5" },
-      extrasSales: { stroke: "#22c55e", fill: "#22c55e" },
-      text: "#e5e7eb",
-      background: "#18212f",
-    }
-  : {
-      totalSales: { stroke: "#4f46e5", fill: "#c7d2fe" },
-      extrasSales: { stroke: "#16a34a", fill: "#dcfce7" },
-      text: "#374151",
-      background: "#fff",
+//Sales charts from react library recharts//
+function SalesChart({ bookings, numDays }) {
+  const { darkMode } = useDarkMode();
+  //allDates creates an array of consecutive dates for the past N days
+  // for example[Dec 11, Dec 12, Dec 13, Dec 14, Dec 15, Dec 16, Dec 17]for 7 days
+  const allDates = eachDayOfInterval({
+    start: subDays(new Date(), numDays - 1),
+    end: new Date(),
+  });
+  // data transforms raw booking data into a structured format for the chart
+  const data = allDates.map((date) => {
+    return {
+      label: format(date, "MMM dd"),
+      // Safety check: use empty array if bookings is null/undefined
+      totalSales: (bookings || [])
+        .filter((booking) => isSameDay(date, new Date(booking.created_at)))
+        .reduce((acc, cur) => acc + cur.totalPrice, 0),
+      extrasSales: (bookings || [])
+        .filter((booking) => isSameDay(date, new Date(booking.created_at)))
+        .reduce((acc, cur) => acc + cur.extraPrice, 0),
     };
+  });
+
+  const colors = darkMode
+    ? {
+        totalSales: { stroke: "#4f46e5", fill: "#4f46e5" },
+        extrasSales: { stroke: "#22c55e", fill: "#22c55e" },
+        text: "#e5e7eb",
+        background: "#18212f",
+        color: "#111",
+      }
+    : {
+        totalSales: { stroke: "#4f46e5", fill: "#c7d2fe" },
+        extrasSales: { stroke: "#16a34a", fill: "#dcfce7" },
+        text: "#374151",
+        background: "#fff",
+        color: "#111",
+      };
+  return (
+    <StyledSalesChart>
+      {/* {responsive container is from react recharts library } */}
+      <ResponsiveContainer height={300} width="100%">
+        {/* Area chart is from react recharts library */}
+        <Heading as="h2">Sales </Heading>
+        <AreaChart data={data}>
+          <XAxis
+            dataKey="label"
+            tick={darkMode ? { fill: colors.text } : { fill: colors.color }}
+            tickLine={{ stroke: colors.text }}
+          />
+          <YAxis
+            unit="$"
+            tickLine={{ stroke: colors.color }}
+            tick={darkMode ? { fill: colors.text } : { fill: colors.color }}
+          />
+          <CartesianGrid strokeDasharray="4" />
+          <Tooltip contentStyle={{ backgroundColor: colors.background }} />
+          <Area
+            dataKey="totalSales"
+            type="monotone"
+            stroke={colors.totalSales.stroke}
+            fill={colors.totalSales.fill}
+            strokeWidth={2}
+            name="Total Sales"
+            unit="$"
+          />
+
+          <Area
+            dataKey="extrasSales"
+            type="monotone"
+            stroke={colors.extrasSales.stroke}
+            fill={colors.extrasSales.fill}
+            strokeWidth={2}
+            name="Extra Sales"
+            unit="$"
+          />
+        </AreaChart>
+      </ResponsiveContainer>
+    </StyledSalesChart>
+  );
+}
+
+export default SalesChart;
