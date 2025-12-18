@@ -17,7 +17,8 @@ const Heading = styled.main`
     css`
       font-size: 2rem;
       font-weight: 600;
-      color: red;
+      margin-bottom: 3rem;
+      color: var(--color-grey-700);
     `}
 
     ${(props) =>

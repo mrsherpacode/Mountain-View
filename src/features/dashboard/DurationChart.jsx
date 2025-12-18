@@ -1,5 +1,12 @@
 import styled from "styled-components";
-import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
+import {
+  Cell,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  Legend,
+} from "recharts";
 import { useDarkMode } from "../../contexts/DarkModalContext";
 import Heading from "../../ui/Heading";
 import PropTypes from "prop-types";
@@ -109,7 +116,7 @@ const startDataDark = [
 ];
 
 function prepareData(startData, stays) {
-  // A bit ugly code, but sometimes this is what it takes when working with real data 😅
+  // A bit ugly code, but sometimes this is what it takes when working with real data
 
   function incArrayValue(arr, field) {
     return arr.map((obj) =>
@@ -117,7 +124,10 @@ function prepareData(startData, stays) {
     );
   }
 
-  const data = stays
+  // Ensure we always have an array to reduce over
+  const safeStays = Array.isArray(stays) ? stays : [];
+
+  const data = safeStays
     .reduce((arr, cur) => {
       const num = cur.numNights;
       if (num === 1) return incArrayValue(arr, "1 night");
@@ -135,9 +145,9 @@ function prepareData(startData, stays) {
   return data;
 }
 
-function DurationChart({ confirmedStays }) {
-  const { isDarkMode } = useDarkMode();
-  const startData = isDarkMode ? startDataDark : startDataLight;
+function DurationChart({ confirmedStays = [] }) {
+  const { darkMode } = useDarkMode();
+  const startData = darkMode ? startDataDark : startDataLight;
   const data = prepareData(startData, confirmedStays);
 
   return (
@@ -163,6 +173,14 @@ function DurationChart({ confirmedStays }) {
               />
             ))}
           </Pie>
+          <Legend
+            verticalAlign="middle"
+            align="right"
+            width="30%"
+            layout="vertical"
+            iconSize={15}
+            iconType="circle"
+          />
           <Tooltip />
         </PieChart>
       </ResponsiveContainer>

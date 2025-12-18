@@ -54,7 +54,7 @@ const StyledSalesChart = styled(DashboardBox)`
 //   { label: "Feb 06", totalSales: 1450, extrasSales: 400 },
 // ];
 
-//Sales charts from react library recharts//
+//Sales charts from react library recharts for documentation visit https://recharts.github.io/en-US/examples///
 function SalesChart({ bookings, numDays }) {
   const { darkMode } = useDarkMode();
   //allDates creates an array of consecutive dates for the past N days
@@ -97,7 +97,10 @@ function SalesChart({ bookings, numDays }) {
       {/* {responsive container is from react recharts library } */}
       <ResponsiveContainer height={300} width="100%">
         {/* Area chart is from react recharts library */}
-        <Heading as="h2">Sales </Heading>
+        <Heading as={"h2"}>
+          Sales from {format(allDates.at(0), "MMM dd yyyy")}&mdash;
+          {format(allDates.at(-1), "MMM dd yyyy")}
+        </Heading>
         <AreaChart data={data}>
           <XAxis
             dataKey="label"
@@ -120,7 +123,7 @@ function SalesChart({ bookings, numDays }) {
             name="Total Sales"
             unit="$"
           />
-
+          {/* extraSales */}
           <Area
             dataKey="extrasSales"
             type="monotone"
