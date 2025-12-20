@@ -124,7 +124,7 @@ function BookingDataBox({ booking }) {
   const guestName = guest?.fullName || "Unknown Guest";
   const email = guest?.email || "No email";
   const country = guest?.country || "Unknown";
-  const countryFlag = guest?.countryFlag || "";
+  const countryFlag = guest?.countryFlag || guest?.countyFlag || "";
   const nationalID = guest?.nationalID || "No ID";
 
   // Safely extract cabin data

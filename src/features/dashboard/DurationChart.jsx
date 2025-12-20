@@ -9,7 +9,6 @@ import {
 } from "recharts";
 import { useDarkMode } from "../../contexts/DarkModalContext";
 import Heading from "../../ui/Heading";
-import PropTypes from "prop-types";
 
 const ChartBox = styled.div`
   /* Box */
@@ -146,6 +145,7 @@ function prepareData(startData, stays) {
 }
 
 function DurationChart({ confirmedStays = [] }) {
+  //here,i'm using custom hook
   const { darkMode } = useDarkMode();
   const startData = darkMode ? startDataDark : startDataLight;
   const data = prepareData(startData, confirmedStays);
@@ -187,9 +187,5 @@ function DurationChart({ confirmedStays = [] }) {
     </ChartBox>
   );
 }
-
-DurationChart.propTypes = {
-  confirmedStays: PropTypes.array,
-};
 
 export default DurationChart;
