@@ -49,7 +49,11 @@ function CheckinBooking() {
     numNights,
   } = booking;
   // optional breakfast
-  const optionalBreakfastPrice = setting.breakfastPrice * numNights * numGuests;
+  const optionalBreakfastPrice =
+    (setting?.breakfastPrice ?? 0) * numNights * numGuests;
+  // Removed unused variable breakfastPrice
+
+  // Removed unused variable breakfastPrice
 
   // Safely extract guest data (same as BookingDataBox)
   const guest = Array.isArray(guests) ? guests[0] : guests;

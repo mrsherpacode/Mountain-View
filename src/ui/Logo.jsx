@@ -14,7 +14,7 @@ function Logo() {
   // Here, i'm using custom hook
   const { darkMode } = useDarkMode();
 
-  const src = darkMode ? "/logo-dark.png" : "/logo-light.png";
+  const src = darkMode ? "/logo-dark.png" : "/logo-dark.png";
   return (
     <StyledLogo>
       <Img src={src} alt="Logo" />

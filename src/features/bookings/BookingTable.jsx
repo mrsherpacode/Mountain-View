@@ -8,9 +8,10 @@ import Pagination from "../../ui/Pagination";
 
 function BookingTable() {
   // here, i'm using custom hook
-  const { bookings, isLoading, error, count } = useBookings();
 
+  const { bookings, isLoading, error, count } = useBookings();
   if (isLoading) return <Spinner />;
+
   if (error) return <div>Error loading bookings: {error.message}</div>;
   if (!bookings?.length) return <Empty resourceName="bookings" />;
 

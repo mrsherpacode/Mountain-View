@@ -47,6 +47,7 @@ function TodayActivity() {
       <Row type="horizontal">
         <Heading as="h2">Today Acitivities</Heading>
       </Row>
+      {/* if not pending  */}
       {!isPending ? (
         activities?.length > 0 ? (
           <TodayList>
