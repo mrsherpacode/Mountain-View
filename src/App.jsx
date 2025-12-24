@@ -21,7 +21,9 @@ import ProctedRoute from "./ui/ProctedRoute";
 // Setting Up React Query
 const queryClient = new QueryClient({
   defaultOptions: {
-    staleTime: 0, // 1 minutes in milliseconds
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5 minutes
+    },
   },
 });
 function App() {
