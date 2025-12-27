@@ -6,8 +6,6 @@ export function useUser() {
     //queryKey identifies what data you want, queryFn defines how to fetch it
     queryKey: ["user"],
     queryFn: getCurrentUser,
-    staleTime: Infinity,
-    retry: false,
   });
   //isAuthenticated = Gets the role property from the user object
   // Compares it to the string "authenticated"

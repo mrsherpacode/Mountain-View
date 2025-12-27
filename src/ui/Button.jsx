@@ -1,4 +1,3 @@
-import { type } from "@testing-library/user-event/dist/type";
 import styled, { css } from "styled-components";
 
 const sizes = {
